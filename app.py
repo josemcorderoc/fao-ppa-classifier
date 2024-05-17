@@ -1,11 +1,13 @@
 import os
 
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 import yaml
+from scipy.special import softmax
 
-from src import classifiers
+from src import classifiers, embeddings
 
 with open("config.yaml", "r") as file:
     config = yaml.safe_load(file)
@@ -16,6 +18,7 @@ with open("config.yaml", "r") as file:
             config[key] = env_var
 
 classifier = getattr(classifiers, config['classifier_function_name'])
+embeddings_model = getattr(embeddings, config['embeddings_model_class'])()
 
 def main():   
     st.title(config['title'])
@@ -24,14 +27,23 @@ def main():
     user_input = st.text_area(config['text_area_label'])
 
     if st.button(config['button_label']):
-        
-        probabilities = classifier(user_input)
-
+        text_embedding = embeddings_model.generate(user_input)
+        similarities = classifier(text_embedding)
+        probabilities = pd.Series(softmax(similarities + 1), index=similarities.index)
         classification = probabilities.idxmax()
-        st.write(f"Classification:\n**{classification}**")
         
-        fig = go.Figure(data=[go.Bar(y=probabilities.to_list(), x=probabilities.index.to_list(),)])
+        fig = go.Figure(
+            data=[
+                go.Bar(
+                    y=probabilities.to_list(),
+                    x=probabilities.index.to_list(),
+                    marker_color=["orange" if ppa == classification else "blue" for ppa in probabilities.index ]
+                )
+            ]
+        )
+        
         fig.update_layout(
+            title=f"Classification: {classification}",
             xaxis_title='Class',
             yaxis_title='Probability'
         )
