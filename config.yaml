@@ -1,0 +1,5 @@
+title: "FAO PPA Classifier"
+description: "Enter some text and the app will classify into a FAO Programme Priority Area (PPA)."
+text_area_label: "Enter text here:"
+button_label: "Classify"
+classifier_function_name: "dummy_classify"
