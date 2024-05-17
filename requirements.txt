@@ -4,3 +4,4 @@ plotly
 pyyaml
 scikit-learn
 scipy
+openai
