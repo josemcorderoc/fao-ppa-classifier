@@ -1,6 +1,7 @@
 from datetime import datetime
 from operator import call
 import os
+import pickle
 from time import sleep
 from turtle import up
 
@@ -13,6 +14,7 @@ import yaml
 from scipy.special import softmax
 from streamlit import session_state as ss
 from infrastructure.s3_repository import S3Repository
+from interfaces.classifier import Classifier
 from interfaces.embedding import Embedding
 from interfaces.repository import Repository
 from models.feedback import Feedback
@@ -30,7 +32,26 @@ with open("config.yaml", "r") as file:
 
 classifier = getattr(classifiers, config['classifier_function_name'])
 # embeddings_model = getattr(embeddings, config['embeddings_model_class'])()
-ppas = ['BE1', 'BE2', 'BE3', 'BE4', 'BL1', 'BL2', 'BL3', 'BL4', 'BL5', 'BL6', 'BN1', 'BN2', 'BN3', 'BN4', 'BN5', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5']
+ppas = ['BE.1',
+ 'BE.2',
+ 'BE.3',
+ 'BE.4',
+ 'BL.1',
+ 'BL.2',
+ 'BL.3',
+ 'BL.4',
+ 'BL.5',
+ 'BL.6',
+ 'BN.1',
+ 'BN.2',
+ 'BN.3',
+ 'BN.4',
+ 'BN.5',
+ 'BP.1',
+ 'BP.2',
+ 'BP.3',
+ 'BP.4',
+ 'BP.5']
 
 
 for attribute in ["predicted_classification", "selected_classification", "liked", "disliked"]:
@@ -39,13 +60,14 @@ for attribute in ["predicted_classification", "selected_classification", "liked"
 
 
 
-def main(repo: Repository, embedding: Embedding): 
+def main(repo: Repository, embedding: Embedding, clf: Classifier): 
     
     def run_classification(prompt_input: str):
         text_embedding = embedding.generate(prompt_input)
-        similarities = classifier(text_embedding)
-        probabilities = pd.Series(softmax(similarities + 1), index=similarities.index)
-        classification = probabilities.idxmax()
+        # similarities = classifier(text_embedding)
+        # probabilities = pd.Series(softmax(similarities + 1), index=similarities.index)
+        # classification = probabilities.idxmax()
+        classification = pd.DataFrame(clf.predict_proba(text_embedding.reshape(1, -1)), columns=ppas).iloc[0].idxmax()
         ss.predicted_classification = classification
         ss.selected_classification = None
         
@@ -91,4 +113,6 @@ def main(repo: Repository, embedding: Embedding):
 if __name__ == "__main__":
     s3repo = S3Repository()
     embedding = OpenAIEmbedding()
-    main(s3repo, embedding)
+    with open('./data/classifiers/ridge_clf.pkl', 'rb') as f:
+        clf = pickle.load(f)
+    main(s3repo, embedding, clf)
