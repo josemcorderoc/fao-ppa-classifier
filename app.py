@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import pickle
 import sys
-sys.path.append(os.path.abspath('src'))
+sys.path.append(str(Path(__file__).resolve().parent / "src"))
 import pandas as pd
 import pytz
 import streamlit as st
