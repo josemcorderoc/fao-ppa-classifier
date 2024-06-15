@@ -1,12 +1,10 @@
+
 import numpy as np
 from openai import OpenAI
-from abc import ABC, abstractmethod
 
-class Embedding(ABC):
-    @abstractmethod
-    def generate(self, text: str):
-        pass
-    
+from interfaces.embedding import Embedding
+
+
 class OpenAIEmbedding(Embedding):
     def __init__(self, model_name='text-embedding-3-small'):
         self.model_name = model_name
