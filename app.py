@@ -1,17 +1,11 @@
 from datetime import datetime
-from operator import call
 import os
 import pickle
-from time import sleep
-from turtle import up
 
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 import pytz
 import streamlit as st
 import yaml
-from scipy.special import softmax
 from streamlit import session_state as ss
 from infrastructure.s3_repository import S3Repository
 from interfaces.classifier import Classifier
