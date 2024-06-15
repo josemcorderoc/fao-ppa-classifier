@@ -1,7 +1,8 @@
 from datetime import datetime
 import os
 import pickle
-
+import sys
+sys.path.append(os.path.abspath('src'))
 import pandas as pd
 import pytz
 import streamlit as st
@@ -13,7 +14,7 @@ from interfaces.embedding import Embedding
 from interfaces.repository import Repository
 from models.feedback import Feedback
 from models.embeddings.openai_embedding import OpenAIEmbedding
-from src import classifiers
+#from src import classifiers
 # from streamlit_extras.stateful_button import button 
 
 with open("config.yaml", "r") as file:
@@ -24,7 +25,7 @@ with open("config.yaml", "r") as file:
         if env_var is not None:
             config[key] = env_var
 
-classifier = getattr(classifiers, config['classifier_function_name'])
+#classifier = getattr(classifiers, config['classifier_function_name'])
 # embeddings_model = getattr(embeddings, config['embeddings_model_class'])()
 ppas = ['BE.1',
  'BE.2',
