@@ -50,7 +50,7 @@ ppas = ['BE.1',
  'BP.5']
 
 
-for attribute in ["predicted_classification", "selected_classification", "liked", "disliked"]:
+for attribute in ["predicted_classification", "selected_classification", "liked", "disliked", "user_input", "classified_text"]:
     if attribute not in ss:
         ss[attribute] = None
 
@@ -66,16 +66,18 @@ def main(repo: Repository, embedding: Embedding, clf: Classifier):
         classification = pd.DataFrame(clf.predict_proba(text_embedding.reshape(1, -1)), columns=ppas).iloc[0].idxmax()
         ss.predicted_classification = classification
         ss.selected_classification = None
+        ss.classified_text = prompt_input
         
     
     st.title(config['title'])
     st.write(config['description'])
     
-    user_input = st.text_area(config['text_area_label'])
+    user_input = st.text_area(config['text_area_label'], key="user_input")
     
-    classify_button = st.button(config['button_label'], on_click=run_classification, key='classification', args=(user_input,))
+    if ss.user_input:
+        classify_button = st.button(config['button_label'], on_click=run_classification, key='classification', args=(user_input,))
 
-    if ss.predicted_classification:
+    if ss.predicted_classification and ss.user_input == ss.classified_text:
         col1, col2, col3, _ = st.columns([.2, .08, .08, .64  ])
         with col1:
             st.write(f"Classification: {ss.predicted_classification}")
