@@ -6,3 +6,4 @@ scikit-learn
 scipy
 openai
 boto3
+streamlit-extras
