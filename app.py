@@ -9,6 +9,7 @@ import pytz
 import streamlit as st
 import yaml
 from streamlit import session_state as ss
+from streamlit_extras.stateful_button import button
 
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
 from infrastructure.s3_repository import S3Repository
@@ -91,10 +92,14 @@ def main(repo: Repository, embedding: Embedding, clf: Classifier):
                 f"Classification: {', '.join(ss.predicted_classification)}")
 
         with col2:
-            st.button("👍", key="liked")
+            def on_liked():
+                ss.disliked = False
+            button("👍", key="liked", on_click=on_liked)
 
         with col3:
-            st.button("👎", key="disliked")
+            def on_disliked():
+                ss.liked = False
+            button("👎", key="disliked", on_click=on_disliked)
 
     if ss.predicted_classification and (ss.liked or ss.disliked or ss.selected_incorrect_ppas or ss.selected_missing_ppas):
         selected_incorrect_ppas = st.multiselect(
@@ -109,7 +114,7 @@ def main(repo: Repository, embedding: Embedding, clf: Classifier):
             key="selected_missing_ppas"
         )
 
-    if ss.selected_incorrect_ppas or ss.selected_missing_ppas:
+    if ss.liked or ss.disliked or ss.selected_incorrect_ppas or ss.selected_missing_ppas:
         if st.button("Save"):
             feedback = Feedback(datetime.now(pytz.utc), user_input, ss.predicted_classification,
                                 ss.selected_incorrect_ppas, ss.selected_missing_ppas, ss.liked, ss.disliked)
