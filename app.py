@@ -68,7 +68,10 @@ def main(repo: Repository, embedding: Embedding, clf: Classifier):
         ss.selected_classification = None
         ss.classified_text = prompt_input
         
-    
+    st.set_page_config(
+        page_title=config['title'],
+        page_icon="./data/media/img/favicon.ico",
+    )
     st.title(config['title'])
     st.write(config['description'])
     
