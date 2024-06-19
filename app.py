@@ -1,9 +1,3 @@
-from models.feedback import Feedback
-from models.embeddings.openai_embedding import OpenAIEmbedding
-from interfaces.repository import Repository
-from interfaces.embedding import Embedding
-from interfaces.classifier import Classifier
-from infrastructure.s3_repository import S3Repository
 import os
 import pickle
 import sys
@@ -17,6 +11,14 @@ import yaml
 from streamlit import session_state as ss
 
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
+from infrastructure.s3_repository import S3Repository
+from interfaces.classifier import Classifier
+from interfaces.embedding import Embedding
+from interfaces.repository import Repository
+from models.embeddings.openai_embedding import OpenAIEmbedding
+from models.feedback import Feedback
+
+
 
 with open("config.yaml", "r") as file:
     config = yaml.safe_load(file)
