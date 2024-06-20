@@ -1,11 +1,11 @@
-from typing import Protocol
+from typing import Any, Protocol
 
 import numpy as np
 
 
 class Classifier(Protocol):
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Any:
         """Fit the model to the training data."""
         ...
         
