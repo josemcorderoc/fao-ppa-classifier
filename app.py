@@ -126,6 +126,6 @@ def main(repo: Repository, embedding: Embedding, clf: Classifier):
 if __name__ == "__main__":
     s3repo = S3Repository()
     embedding = OpenAIEmbedding()
-    with open('./data/classifiers/ridge_clf.pkl', 'rb') as f:
+    with open('./data/classifiers/ridge_clf_backup.pkl', 'rb') as f:
         clf = pickle.load(f)
     main(s3repo, embedding, clf)
